@@ -20,11 +20,5 @@
       "dest": "log-app.html"
     }
   ],
-  "env": {
-    "TWILIO_ACCOUNT_SID": "@twilio_account_sid",
-    "TWILIO_AUTH_TOKEN": "@twilio_auth_token",
-    "TWILIO_PHONE": "@twilio_phone",
-    "AIRTABLE_TOKEN": "@airtable_token",
-    "BASE_ID": "@base_id"
-  }
+
 }
