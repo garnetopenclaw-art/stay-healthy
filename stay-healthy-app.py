@@ -4,7 +4,7 @@ Stay Healthy 💊 - API Backend
 Handles medication logging, reminders, and adherence tracking
 """
 
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 import json
 import urllib.request
@@ -13,8 +13,16 @@ from datetime import datetime, timedelta
 from twilio.rest import Client
 import os
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='.')
 CORS(app)
+
+@app.route('/')
+def index():
+    return send_from_directory('.', 'log-app.html')
+
+@app.route('/dashboard')
+def dashboard():
+    return send_from_directory('.', 'dashboard.html')
 
 # Configuration
 AIRTABLE_TOKEN = os.getenv("AIRTABLE_TOKEN", "")
