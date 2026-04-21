@@ -10,6 +10,9 @@ import json
 import urllib.request
 import urllib.error
 from datetime import datetime, timedelta
+from zoneinfo import ZoneInfo
+
+EASTERN = ZoneInfo("America/New_York")
 from twilio.rest import Client
 import os
 
@@ -75,12 +78,13 @@ def log_medication():
         return jsonify({"error": f"Unknown medication: {medication}"}), 400
 
     # Add record to Adherence Log
+    now_et = datetime.now(EASTERN)
     record = {
         "fields": {
-            "Date": datetime.now().date().isoformat(),
+            "Date": now_et.date().isoformat(),
             "Medication": [med_record_id],
             "Taken": True,
-            "Timestamp": datetime.now().isoformat()
+            "Timestamp": now_et.isoformat()
         }
     }
     
