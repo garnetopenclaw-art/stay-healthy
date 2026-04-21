@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stay Healthy 💊 - Log Medication</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 400px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        
+        h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+            color: #333;
+            text-align: center;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 40px;
+            font-size: 14px;
+        }
+        
+        .medication-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .med-button {
+            padding: 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 14px;
+            font-weight: 600;
+            text-align: center;
+        }
+        
+        .med-button:hover {
+            border-color: #667eea;
+            background: #f5f5ff;
+        }
+        
+        .med-button.rosu {
+            background: #e3f2fd;
+            border-color: #2196f3;
+        }
+        
+        .med-button.repa {
+            background: #f3e5f5;
+            border-color: #9c27b0;
+        }
+        
+        .med-name {
+            font-weight: 700;
+            display: block;
+            margin-bottom: 5px;
+        }
+        
+        .med-dose {
+            font-size: 12px;
+            color: #666;
+        }
+        
+        .status {
+            text-align: center;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+        
+        .status.success {
+            background: #c8e6c9;
+            color: #2e7d32;
+            border: 1px solid #81c784;
+            display: block;
+        }
+        
+        .status.error {
+            background: #ffcdd2;
+            color: #c62828;
+            border: 1px solid #ef5350;
+            display: block;
+        }
+        
+        .timestamp {
+            font-size: 12px;
+            color: #999;
+            text-align: center;
+        }
+        
+        .info-box {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 13px;
+            color: #666;
+            line-height: 1.6;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Stay Healthy 💊</h1>
+        <p class="subtitle">Log your medication intake</p>
+        
+        <div class="status" id="status"></div>
+        
+        <div class="medication-grid">
+            <button class="med-button rosu" onclick="logMedication('rosu')">
+                <span class="med-name">Rosuvastatin</span>
+                <span class="med-dose">10mg Daily</span>
+            </button>
+            <button class="med-button repa" onclick="logMedication('repa')">
+                <span class="med-name">Repatha</span>
+                <span class="med-dose">Bi-weekly</span>
+            </button>
+        </div>
+        
+        <div class="timestamp" id="timestamp"></div>
+        
+        <div class="info-box">
+            <strong>How it works:</strong><br>
+            Click the button when you take your medication. Your adherence will be tracked and displayed on the dashboard.
+        </div>
+    </div>
+    
+    <script>
+        const API_URL = "https://stay-healthy-api.vercel.app/api";
+        
+        function showStatus(message, type) {
+            const el = document.getElementById('status');
+            el.textContent = message;
+            el.className = `status ${type}`;
+            setTimeout(() => {
+                el.className = 'status';
+            }, 3000);
+        }
+        
+        async function logMedication(med) {
+            try {
+                const response = await fetch(`${API_URL}/log-medication`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ medication: med })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    const name = med === 'rosu' ? 'Rosuvastatin' : 'Repatha';
+                    showStatus(`✅ ${name} logged!`, 'success');
+                    updateTimestamp();
+                } else {
+                    showStatus('Error logging medication', 'error');
+                }
+            } catch (e) {
+                showStatus('Connection error', 'error');
+            }
+        }
+        
+        function updateTimestamp() {
+            const now = new Date();
+            const time = now.toLocaleTimeString('en-US', { 
+                hour: '2-digit', 
+                minute: '2-digit',
+                hour12: true 
+            });
+            document.getElementById('timestamp').textContent = `Last logged: ${time}`;
+        }
+        
+        // Update timestamp on load
+        updateTimestamp();
+    </script>
+</body>
+</html>
