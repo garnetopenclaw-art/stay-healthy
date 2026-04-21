@@ -11,6 +11,12 @@ CORS(app)
 
 # Configuration from env
 AIRTABLE_TOKEN = os.getenv("AIRTABLE_TOKEN", "")
+
+# Medication record IDs in Airtable (Medication field is a linked record)
+MEDICATION_IDS = {
+    "rosu": "recNeceFIU2ncSarY",
+    "repa": "recITzLhBwyA296tN"
+}
 BASE_ID = os.getenv("BASE_ID", "")
 TWILIO_ACCOUNT_SID = os.getenv("TWILIO_ACCOUNT_SID", "")
 TWILIO_AUTH_TOKEN = os.getenv("TWILIO_AUTH_TOKEN", "")
@@ -45,11 +51,15 @@ def log_medication():
     
     if not medication:
         return jsonify({"error": "medication required"}), 400
+
+    med_record_id = MEDICATION_IDS.get(medication)
+    if not med_record_id:
+        return jsonify({"error": f"Unknown medication: {medication}"}), 400
     
     record = {
         "fields": {
             "Date": datetime.now().date().isoformat(),
-            "Medication": medication,
+            "Medication": [med_record_id],
             "Taken": True,
             "Timestamp": datetime.now().isoformat()
         }
