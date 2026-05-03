@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stay Healthy 💊 - Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+        
+        .header {
+            max-width: 1200px;
+            margin: 0 auto 40px;
+            text-align: center;
+        }
+        
+        h1 {
+            font-size: 32px;
+            margin-bottom: 5px;
+            color: #333;
+        }
+        
+        .subtitle {
+            color: #666;
+            font-size: 16px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .stat-label {
+            color: #666;
+            font-size: 13px;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+        
+        .stat-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: #667eea;
+        }
+        
+        .stat-value.rosu {
+            color: #2196f3;
+        }
+        
+        .stat-value.repa {
+            color: #9c27b0;
+        }
+        
+        .calendar-section {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+        
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        
+        .calendar-header h2 {
+            font-size: 20px;
+            color: #333;
+        }
+        
+        .calendar-nav {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .calendar-nav button {
+            padding: 8px 16px;
+            border: 1px solid #ddd;
+            background: white;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            color: #667eea;
+            transition: all 0.2s;
+        }
+        
+        .calendar-nav button:hover {
+            background: #f5f5ff;
+            border-color: #667eea;
+        }
+        
+        .calendar {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .day-header {
+            text-align: center;
+            font-weight: 600;
+            color: #666;
+            font-size: 13px;
+            padding: 10px 0;
+        }
+        
+        .day {
+            aspect-ratio: 1;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 13px;
+            font-weight: 600;
+            position: relative;
+        }
+        
+        .day:hover {
+            border-color: #667eea;
+            background: #f5f5ff;
+        }
+        
+        .day.other-month {
+            color: #ccc;
+        }
+        
+        .day .date {
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+        
+        .day .meds {
+            display: flex;
+            gap: 3px;
+            font-size: 10px;
+        }
+        
+        .med-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+        
+        .med-indicator.rosu {
+            background: #2196f3;
+        }
+        
+        .med-indicator.repa {
+            background: #9c27b0;
+        }
+        
+        .med-indicator.missing {
+            background: #f44336;
+        }
+        
+        .day.taken {
+            background: #c8e6c9;
+            border-color: #81c784;
+        }
+        
+        .day.missing {
+            background: #ffcdd2;
+            border-color: #ef5350;
+        }
+        
+        .legend {
+            display: flex;
+            gap: 30px;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #e0e0e0;
+            font-size: 13px;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .legend-dot {
+            width: 16px;
+            height: 16px;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Stay Healthy 💊</h1>
+        <p class="subtitle">Medication Adherence Dashboard</p>
+    </div>
+    
+    <div class="container">
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-label">Rosuvastatin (This Month)</div>
+                <div class="stat-value rosu" id="rosu-count">-</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Repatha (This Month)</div>
+                <div class="stat-value repa" id="repa-count">-</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Total Days Tracked</div>
+                <div class="stat-value" id="total-days">-</div>
+            </div>
+        </div>
+        
+        <div class="calendar-section">
+            <div class="calendar-header">
+                <h2 id="month-label">April 2026</h2>
+                <div class="calendar-nav">
+                    <button onclick="prevMonth()">← Previous</button>
+                    <button onclick="nextMonth()">Next →</button>
+                    <button onclick="goToday()">Today</button>
+                </div>
+            </div>
+            
+            <div class="calendar">
+                <div class="day-header">Sun</div>
+                <div class="day-header">Mon</div>
+                <div class="day-header">Tue</div>
+                <div class="day-header">Wed</div>
+                <div class="day-header">Thu</div>
+                <div class="day-header">Fri</div>
+                <div class="day-header">Sat</div>
+                <div id="calendar-days"></div>
+            </div>
+            
+            <div class="legend">
+                <div class="legend-item">
+                    <div class="legend-dot" style="background: #c8e6c9;"></div>
+                    <span>Taken</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-dot" style="background: #ffcdd2;"></div>
+                    <span>Missing</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-dot" style="background: white; border: 1px solid #e0e0e0;"></div>
+                    <span>Not tracked</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        const API_URL = "https://stay-healthy-api.vercel.app/api";
+        let currentDate = new Date();
+        let adherenceData = {};
+        
+        async function loadAdherence() {
+            try {
+                const response = await fetch(`${API_URL}/adherence`);
+                const records = await response.json();
+                
+                adherenceData = {};
+                records.forEach(record => {
+                    const date = record.fields.Date;
+                    const med = record.fields.Medication;
+                    const taken = record.fields.Taken;
+                    
+                    if (!adherenceData[date]) {
+                        adherenceData[date] = {};
+                    }
+                    adherenceData[date][med] = taken;
+                });
+                
+                renderCalendar();
+                updateStats();
+            } catch (e) {
+                console.error('Error loading adherence:', e);
+            }
+        }
+        
+        function renderCalendar() {
+            const year = currentDate.getFullYear();
+            const month = currentDate.getMonth();
+            
+            // Update header
+            const monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
+                             'July', 'August', 'September', 'October', 'November', 'December'];
+            document.getElementById('month-label').textContent = `${monthNames[month]} ${year}`;
+            
+            // Get first day and days in month
+            const first = new Date(year, month, 1);
+            const last = new Date(year, month + 1, 0);
+            const daysInMonth = last.getDate();
+            const startingDayOfWeek = first.getDay();
+            
+            let html = '';
+            
+            // Previous month's days
+            const prevMonthDays = new Date(year, month, 0).getDate();
+            for (let i = startingDayOfWeek - 1; i >= 0; i--) {
+                html += `<div class="day other-month">${prevMonthDays - i}</div>`;
+            }
+            
+            // Current month's days
+            for (let day = 1; day <= daysInMonth; day++) {
+                const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                const data = adherenceData[dateStr] || {};
+                
+                const rosuTaken = data['rosu'] || false;
+                const repaTaken = data['repa'] || false;
+                
+                let dayClass = 'day';
+                if (rosuTaken) dayClass += ' taken';
+                if (data['rosu'] === false) dayClass += ' missing';
+                
+                html += `<div class="${dayClass}" onclick="showDay('${dateStr}')">
+                    <div class="date">${day}</div>
+                    <div class="meds">
+                        ${rosuTaken ? '<div class="med-indicator rosu"></div>' : ''}
+                        ${repaTaken ? '<div class="med-indicator repa"></div>' : ''}
+                    </div>
+                </div>`;
+            }
+            
+            // Next month's days
+            const remainingDays = 42 - (startingDayOfWeek + daysInMonth);
+            for (let i = 1; i <= remainingDays; i++) {
+                html += `<div class="day other-month">${i}</div>`;
+            }
+            
+            document.getElementById('calendar-days').innerHTML = html;
+        }
+        
+        function updateStats() {
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = now.getMonth();
+            
+            let rosuCount = 0, repaCount = 0;
+            
+            Object.entries(adherenceData).forEach(([date, meds]) => {
+                const dateObj = new Date(date);
+                if (dateObj.getFullYear() === year && dateObj.getMonth() === month) {
+                    if (meds['rosu']) rosuCount++;
+                    if (meds['repa']) repaCount++;
+                }
+            });
+            
+            document.getElementById('rosu-count').textContent = rosuCount;
+            document.getElementById('repa-count').textContent = repaCount;
+            document.getElementById('total-days').textContent = Object.keys(adherenceData).length;
+        }
+        
+        function prevMonth() {
+            currentDate.setMonth(currentDate.getMonth() - 1);
+            renderCalendar();
+        }
+        
+        function nextMonth() {
+            currentDate.setMonth(currentDate.getMonth() + 1);
+            renderCalendar();
+        }
+        
+        function goToday() {
+            currentDate = new Date();
+            renderCalendar();
+        }
+        
+        function showDay(date) {
+            alert(`Details for ${date} coming soon!`);
+        }
+        
+        // Load on startup
+        loadAdherence();
+        
+        // Refresh every 5 minutes
+        setInterval(loadAdherence, 5 * 60 * 1000);
+    </script>
+</body>
+</html>
